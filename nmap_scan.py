@@ -4,15 +4,21 @@ import re
 from tabulate import tabulate
 
 def get_active_interface():
+    """
+    Finds the active network interface on the machine (e.g., en0 on macOS).
+    """
     result = subprocess.run(['ifconfig'], capture_output=True, text=True)
     interface = None
     for line in result.stdout.split('\n'):
-        if 'en0' in line:  # Adjust if necessary
+        if 'en0' in line:  # Adjust if necessary for different interfaces
             interface = line.split(':')[0]
             break
     return interface
 
 def get_local_ip(interface):
+    """
+    Retrieves the local IP address of the specified network interface.
+    """
     result = subprocess.run(['ifconfig', interface], capture_output=True, text=True)
     match = re.search(r'inet (\d+\.\d+\.\d+\.\d+)', result.stdout)
     if match:
@@ -20,24 +26,36 @@ def get_local_ip(interface):
     return None
 
 def get_network_range(ip):
+    """
+    Computes the network range from the given IP address (assumes /24 subnet).
+    """
     parts = ip.split('.')
     parts[-1] = '0/24'
     return '.'.join(parts)
 
 def scan_network(network_range):
+    """
+    Scans the specified network range to find active hosts.
+    """
     nm = nmap.PortScanner()
-    nm.scan(hosts=network_range, arguments='-sn')
+    nm.scan(hosts=network_range, arguments='-sn')  # Ping scan to find live hosts
     active_hosts = [host for host in nm.all_hosts() if nm[host].state() == 'up']
     return active_hosts
 
 def scan_vulnerabilities(host):
+    """
+    Scans the specified host for vulnerabilities using Nmap's vulners script.
+    """
     nm = nmap.PortScanner()
-    nm.scan(hosts=host, arguments='-sV --script vulners')
+    nm.scan(hosts=host, arguments='-sV --script vulners')  # Service version detection and vulnerability scan
     return nm[host]
 
 def get_host_details(host):
+    """
+    Retrieves detailed information about the specified host.
+    """
     nm = nmap.PortScanner()
-    nm.scan(hosts=host, arguments='-O -sV')
+    nm.scan(hosts=host, arguments='-O -sV')  # OS detection and service version detection
     host_info = nm[host]
     details = {
         'IP': host,
@@ -49,10 +67,16 @@ def get_host_details(host):
     return details
 
 def list_hosts(active_hosts):
+    """
+    Displays a list of active hosts in a table format.
+    """
     table = [[idx + 1, host] for idx, host in enumerate(active_hosts)]
     print(tabulate(table, headers=["#", "Host"], tablefmt="pretty"))
 
 def main():
+    """
+    Main function to drive the scanning process and user interactions.
+    """
     interface = get_active_interface()
     if not interface:
         print("No active interface found.")
