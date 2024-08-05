@@ -56,7 +56,7 @@ The Nmap Vulnerability Scanner is a Python application that scans a network to i
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](mit-license.org) file for details.
 
 ## Contributing
 
