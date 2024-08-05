@@ -64,5 +64,5 @@ Feel free to open issues or submit pull requests. Contributions are welcome!
 
 ## Contact
 
-If you have any questions or suggestions, please contact [your-email@example.com](mailto:your-email@example.com).
+If you have any questions or suggestions, please contact [fslulgjuraj1@gmail.com](mailto:fslulgjuraj1@gmail.com).
 
